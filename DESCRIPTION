@@ -1,0 +1,9 @@
+Package: ssoftveR
+Title: Support Package for Statistical Software End Project
+Version: 0.0.0.9000
+Authors@R: person("Blagoje", "Ivanovic", email = "mv13021@alas.math.rs", role = c("aut", "cre"))
+Description: This package provides support functions used in the project.
+Depends: R (>= 3.1.0)
+License: MIT
+Encoding: UTF-8
+LazyData: true
