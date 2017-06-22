@@ -1,0 +1,2 @@
+PKG_LIBS= -lpthread -lX11
+
