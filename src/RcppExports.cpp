@@ -8,7 +8,7 @@ using namespace cimg_library;
 using namespace Rcpp;
 
 // C_solid_blobs
-NumericVector C_solid_blobs(NumericVector img_inp);
+LogicalVector C_solid_blobs(NumericVector img_inp);
 RcppExport SEXP ssoftveR_C_solid_blobs(SEXP img_inpSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
