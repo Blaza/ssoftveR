@@ -3,5 +3,6 @@
 export(get_shapes)
 export(solid_blobs)
 import(imager)
+import(purrr)
 importFrom(Rcpp,sourceCpp)
 useDynLib(ssoftveR)

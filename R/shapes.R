@@ -27,7 +27,8 @@ solid_blobs <- function(img) {
 #' @export
 get_shapes <- function(img) {
   blobs <- solid_blobs(img)
-  imager::split_connected(blobs)
+  min_area <- (dim(img)[1] * dim(img)[2]) / 100
+  imager::split_connected(blobs) %>% purrr::discard(~ sum(.) < min_area)
 }
 
 
