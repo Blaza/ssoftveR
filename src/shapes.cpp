@@ -19,6 +19,8 @@ LogicalVector C_solid_blobs(NumericVector img_inp) {
     cimg_forC(img, k) { // loop on color channels
         cimg_for3x3(img, x, y, 0, k, N, double) {
             // if there is no variance, all pixels are equal
+            // we use && because once one channel is different, it is different
+            // for all eternity.
             dest(x, y) = dest(x, y) && (N.variance() < 1e-10);
         }
     }

@@ -14,7 +14,6 @@
 #' @export
 solid_blobs <- function(img) {
   img_flat <- imager::flatten.alpha(img)
-  attr(img_flat, "alpha") <- NULL
   C_solid_blobs(img_flat)
 }
 
