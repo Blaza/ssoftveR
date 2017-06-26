@@ -3,6 +3,7 @@
 #' Plots the pixset component of the object in black, and the contours in red.
 #'
 #' @param shape - the object of class shape to plot
+#' @export
 plot.shape <- function(shape) {
   plot(shape$pixset)
   # we don't want a return value, so we use invisible
