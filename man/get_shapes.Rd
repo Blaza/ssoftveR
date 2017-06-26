@@ -12,7 +12,7 @@ get_shapes(img, min_area = 25, ...)
 \item{min_area}{- the minimum area (number of pixels) of a connected object
 that can be considered a shape}
 
-\item{...}{- additional parameters passed to solid_blobs (stencil/sq_n)}
+\item{...}{- additional parameters passed to solid_blobs (stencil/cr_n)}
 }
 \value{
 A list of pixsets, each representing one shape (connected set

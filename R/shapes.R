@@ -28,7 +28,8 @@ plot.shape <- function(shape) {
 #' @return A pixset where every pixel is TRUE if the neighbourhood is of the
 #'         same color as the pixel
 #' @export
-solid_blobs <- function(img, stencil = NULL, cr_n) {
+solid_blobs <- function(img, stencil = NULL,
+                        cr_n = max(min(dim(img)[1:2]) %/% 100, 3)) {
   if(is.null(stencil)) {
     range <- -(cr_n%/%2) : (cr_n%/%2)
     len <- length(range)
