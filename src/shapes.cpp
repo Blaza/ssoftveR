@@ -1,6 +1,7 @@
 // [[Rcpp::depends(imager)]]
 #define cimg_display_type 0
 #include <imager.h>
+#include <Rcpp.h>
 #include <cstdint>
 #include <cmath>
 using namespace cimg_library;
@@ -13,7 +14,8 @@ bool equal(double a, double b) {
 // [[Rcpp::export]]
 LogicalVector C_solid_blobs(NumericVector img_inp, IntegerMatrix stencil) {
     int loc_x, loc_y;
-
+    int st_len = stencil.nrow();
+    
     CImg<double> img = as<CImg<double>>(img_inp);
     int w = img.width();
     int h = img.height();
@@ -25,7 +27,7 @@ LogicalVector C_solid_blobs(NumericVector img_inp, IntegerMatrix stencil) {
     // stencil mask and see if the neighbourhood is homogenous on each channel.
     cimg_forXYC(img, x, y, c) {
         // iterate neighbourhood according to stencil
-        for(int i = 0; i < stencil.nrow(); i++) {
+        for(int i = 0; i < st_len; i++) {
             loc_x = x + stencil(i, 0);
             loc_y = y + stencil(i, 1);
 
