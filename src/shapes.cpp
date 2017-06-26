@@ -6,22 +6,38 @@
 using namespace cimg_library;
 using namespace Rcpp;
 
+bool equal(double a, double b) {
+    return fabs(a -b) < 1e-16;
+}
+
 // [[Rcpp::export]]
-LogicalVector C_solid_blobs(NumericVector img_inp) {
+LogicalVector C_solid_blobs(NumericVector img_inp, IntegerMatrix stencil) {
+    int loc_x, loc_y;
+
     CImg<double> img = as<CImg<double>>(img_inp);
+    int w = img.width();
+    int h = img.height();
+
     // define the resulting bool image, set all to true
-    CImg<bool> dest(img.width(), img.height(), 1, 1, true);
+    CImg<bool> dest(w, h, 1, 1, true);
 
-    CImg<double> N(3, 3); // Define a 3x3 neighborhood as a 3x3 image.
+    // We loop over all color channels and swipe through the image with the
+    // stencil mask and see if the neighbourhood is homogenous on each channel.
+    cimg_forXYC(img, x, y, c) {
+        // iterate neighbourhood according to stencil
+        for(int i = 0; i < stencil.nrow(); i++) {
+            loc_x = x + stencil(i, 0);
+            loc_y = y + stencil(i, 1);
 
-    // We'll loop over all color channels and swipe through the image with 3x3
-    // square mask and see if the neighbourhood is homogenous on each channel.
-    cimg_forC(img, k) { // loop on color channels
-        cimg_for3x3(img, x, y, 0, k, N, double) {
-            // if there is no variance, all pixels are equal
-            // we use && because once one channel is different, it is different
-            // for all eternity.
-            dest(x, y) = dest(x, y) && (N.variance() < 1e-10);
+            // check whether we're still inside the image
+            if(loc_x >= 0 && loc_x < w && loc_y >= 0 && loc_y < h) {
+                // Set destination pixel to false if current pixel isn't the
+                // same as the center one.
+                // We use && because once one channel is different, it is
+                // different for all eternity.
+                dest(x, y) = dest(x, y) &&
+                             equal(img(loc_x, loc_y, 0, c), img(x, y, 0, c));
+            }
         }
     }
     // return an imager pixset object

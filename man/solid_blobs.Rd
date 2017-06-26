@@ -4,10 +4,16 @@
 \alias{solid_blobs}
 \title{Find solid color connected areas in the image}
 \usage{
-solid_blobs(img)
+solid_blobs(img, stencil = NULL, sq_n)
 }
 \arguments{
 \item{img}{- the cimg imager object}
+
+\item{stencil}{- a stencil dataframe which defines the neighbourhood we use.
+Must have a dx and dy columns, like for the imager package}
+
+\item{sq_n}{- if set, the stencil becomes a "n x n" square neighbourhood,
+centered at current pixel. Must be an odd number.}
 }
 \value{
 A pixset where every pixel is TRUE if the neighbourhood is of the
@@ -18,7 +24,7 @@ Turns the image object into a logical image (pixset) of blobs of pixels of
 the same color
 }
 \details{
-Each pixel maps to TRUE if every pixel in the square 3x3 neighbourhood is
+Each pixel maps to TRUE if every pixel in the stencil neighbourhood is
 the same color, otherwise it becomes FALSE.
 
 Some erosion will happen because of the square neighbourhood

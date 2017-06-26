@@ -8,19 +8,20 @@ using namespace cimg_library;
 using namespace Rcpp;
 
 // C_solid_blobs
-LogicalVector C_solid_blobs(NumericVector img_inp);
-RcppExport SEXP ssoftveR_C_solid_blobs(SEXP img_inpSEXP) {
+LogicalVector C_solid_blobs(NumericVector img_inp, IntegerMatrix stencil);
+RcppExport SEXP ssoftveR_C_solid_blobs(SEXP img_inpSEXP, SEXP stencilSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type img_inp(img_inpSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_solid_blobs(img_inp));
+    Rcpp::traits::input_parameter< IntegerMatrix >::type stencil(stencilSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_solid_blobs(img_inp, stencil));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"ssoftveR_C_solid_blobs", (DL_FUNC) &ssoftveR_C_solid_blobs, 1},
+    {"ssoftveR_C_solid_blobs", (DL_FUNC) &ssoftveR_C_solid_blobs, 2},
     {NULL, NULL, 0}
 };
 

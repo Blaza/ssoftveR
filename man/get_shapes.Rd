@@ -4,15 +4,20 @@
 \alias{get_shapes}
 \title{Get a list of shapes on the image}
 \usage{
-get_shapes(img)
+get_shapes(img, min_area = 25, ...)
 }
 \arguments{
 \item{img}{- the cimg imager object}
+
+\item{min_area}{- the minimum area (number of pixels) of a connected object
+that can be considered a shape}
+
+\item{...}{- additional parameters passed to solid_blobs (stencil/sq_n)}
 }
 \value{
 A list of pixsets, each representing one shape (connected set
         of pixels, excluding background)
 }
 \description{
-Gets a list of pixsets representing connected areas in the image, aka shapes
+Gets a list of pixsets representing connected areas in the image
 }
