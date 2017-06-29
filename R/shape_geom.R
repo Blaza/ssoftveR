@@ -9,7 +9,7 @@
 #'                approximating velocity vector
 #' @return A list of objects of class 'side', each containing the x and y
 #'         coordinates of the points of the side of the shape, and also the
-#'         approximate slope angle of the line.
+#'         (unit) direction vector and approximate slope angle of the line.
 #' @export
 get_sides <- function(shape, ma = 7, vel_n = 2) {
   # Assuming one contour (also closed)
@@ -21,19 +21,23 @@ get_sides <- function(shape, ma = 7, vel_n = 2) {
 
   cnt_len <- length(contour$x)
 
-  # we smooth the contour, as it is on a discrete net
+  # we smooth the contour, as it is on a discrete net and jaggedy
   contour_ma <- list()
   contour_ma$x <- moving_average(contour$x, n = ma)
   contour_ma$y <- moving_average(contour$y, n = ma)
 
+  # we calculate velocity vector as the mean difference in axes, using offsets
+  # defined in range
   range <- setdiff(-vel_n:vel_n, 0)
   vel_x <- rowMeans(sapply(range, function(r) {
+                              # sign(r) ensures we have the right orientation
                               sign(r) * (shift(contour_ma$x, r) - contour_ma$x)
                      }))
   vel_y <- rowMeans(sapply(range, function(r) {
                               sign(r) * (shift(contour_ma$y, r) - contour_ma$y)
                      }))
 
+  # we create matrix where each row is the x and y coord of the velocity vector
   vel <- cbind(vel_x, vel_y)
   unit_vel <- vel / sqrt(rowSums(vel^2))
 
@@ -75,15 +79,19 @@ get_sides <- function(shape, ma = 7, vel_n = 2) {
                    len <- round(0.75 * length(side_ind))
                    m_ind <- (length(side_ind) - len) %/% 2 + 1 : len
                    mid_ind <- side_ind[m_ind]
+
+                   # get the mean unit velocity vector of all middle points
+                   dir_vec <- colMeans(unit_vel[mid_ind, ])
+                   # scale it to unit vector
+                   dir_vec <- dir_vec / sqrt(sum(dir_vec^2))
+                   names(dir_vec) <- c('x', 'y')
+
                    # build the list containing current side
                    side <- list(x = contour$x[side_ind],
                                 y = contour$y[side_ind],
-                                # we take the mean of all slopes of velocity
-                                # vectors of middle (more stable) side points
-                                slope = mean(atan( unit_vel[mid_ind, 2] /
-                                                   unit_vel[mid_ind, 1] )) )
-                   # we want a slope between 0 and pi
-                   #side$slope <- side$slope %% pi
+                                direction = dir_vec,
+                                slope = atan(dir_vec[2]/dir_vec[1]) * 180 / pi)
+                   names(side$slope) <- 'deg'
                    class(side) <- c('side', class(side))
                    side
             })
@@ -97,14 +105,37 @@ get_sides <- function(shape, ma = 7, vel_n = 2) {
 #' changes significantly
 #'
 #' @param shape - the shape for which to find vertices
+#' @param sides - the list of sides to use for vertices, if NULL get_sides() is
+#'                called to extract sides from shape
 #' @param ... - additional parameters passed to get_lines
 #' @return A list containing the x and y coordinates of vertices, and the
 #'         approximate angles at the respective vertices
 #' @export
-get_vertices <- function(shape, ...) {
-  sides <- get_sides(shape, ...)
+get_vertices <- function(shape, sides = NULL, ...) {
+  if(is.null(sides))
+    sides <- get_sides(shape, ...)
+
   vertices <- list(x = sapply(sides, function(s) s$x[1]),
                    y = sapply(sides, function(s) s$y[1]))
+  vert_mat <- do.call(cbind, vertices)
+  angles <- apply(vert_mat, 1, function(v) {
+                # get direction vectors of sides that contain the point v
+                vec <- lapply(sides, function(s) {
+                            if(any(s$x == v[1] & s$y == v[2])) {
+                              s$direction
+                            } else {
+                              NULL
+                            }
+                       }) %>% discard(is.null)
+                # the angle is the arccos of scalar product of two direction
+                # vector from the same vertex, we negate one of them to get
+                # the direction which goes along the shape, so we get the inner
+                # angle at the vertex. We'll use angles in degrees
+                if(length(vec) == 2)
+                  acos(vec[[1]] %*% (-vec[[2]])) * 180 / pi
+
+            })
+  vertices$angle <- angles
   vertices
 }
 
