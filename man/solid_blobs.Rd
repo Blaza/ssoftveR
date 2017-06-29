@@ -4,7 +4,7 @@
 \alias{solid_blobs}
 \title{Find solid color connected areas in the image}
 \usage{
-solid_blobs(img, stencil = NULL, cr_n = max(min(dim(img)[1:2])\%/\%100, 3))
+solid_blobs(img, stencil = NULL, cr_n = max(min(dim(img)[1:2])\%/\%100, 5))
 }
 \arguments{
 \item{img}{- the cimg imager object}

@@ -30,7 +30,7 @@ plot.shape <- function(shape) {
 #'         same color as the pixel
 #' @export
 solid_blobs <- function(img, stencil = NULL,
-                        cr_n = max(min(dim(img)[1:2]) %/% 100, 3)) {
+                        cr_n = max(min(dim(img)[1:2]) %/% 100, 5)) {
   if(is.null(stencil)) {
     range <- -(cr_n%/%2) : (cr_n%/%2)
     len <- length(range)
@@ -59,9 +59,11 @@ solid_blobs <- function(img, stencil = NULL,
 #'         xy coordinates of the pixset and the contours of the pixset.
 #' @export
 shape_from_pixset <- function(px) {
+  coords <- imager::where(px)
   shape <- list(pixset = px,
-                xy = imager::where(px),
-                contours = imager::contours(px))
+                xy = coords,
+                contours = imager::contours(px),
+                centroid = colMeans(coords))
   class(shape) <- c("shape", class(shape))
   shape
 }
