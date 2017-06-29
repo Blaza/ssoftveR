@@ -17,7 +17,7 @@ approximating velocity vector}
 \value{
 A list of objects of class 'side', each containing the x and y
         coordinates of the points of the side of the shape, and also the
-        approximate slope angle of the line.
+        (unit) direction vector and approximate slope angle of the line.
 }
 \description{
 Sides (straight lines in the shape) are sets of points where the slope

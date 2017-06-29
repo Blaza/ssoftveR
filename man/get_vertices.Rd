@@ -4,10 +4,13 @@
 \alias{get_vertices}
 \title{Get possible vertices}
 \usage{
-get_vertices(shape, ...)
+get_vertices(shape, sides = NULL, ...)
 }
 \arguments{
 \item{shape}{- the shape for which to find vertices}
+
+\item{sides}{- the list of sides to use for vertices, if NULL get_sides() is
+called to extract sides from shape}
 
 \item{...}{- additional parameters passed to get_lines}
 }
