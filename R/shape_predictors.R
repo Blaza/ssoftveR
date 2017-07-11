@@ -4,7 +4,8 @@
 shape_predictors <- c("centroid_distance_variance",
                       "vertex_count",
                       "side_length_variance",
-                      "angle_variance")
+                      "angle_variance",
+                      "adj_angle_sum_variance")
 
 #' Variance of the distance from the centroid
 #'
@@ -69,3 +70,22 @@ angle_variance <- function(shape) {
 
   if(is.null(vertices$angle)) 0 else var(vertices$angle)
 }
+
+
+#' Variance of the sum of adjacent angles
+#'
+#' In paralelograms, the sum of all adjacent angle pairs is 180deg
+#'
+#' @param shape - the shape for which to calculate the predictor
+#' @return The variance of the sum of adjacent angles
+#' @export
+adj_angle_sum_variance <- function(shape) {
+  vertices <- shape$vertices
+
+  if(is.null(vertices$angle)) return(0)
+
+  adj_ang_sum <- vertices$angle + shift(vertices$angle)
+
+  var(adj_ang_sum)
+}
+
