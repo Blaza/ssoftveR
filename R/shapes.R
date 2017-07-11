@@ -8,6 +8,8 @@ plot.shape <- function(shape) {
   plot(shape$pixset)
   # we don't want a return value, so we use invisible
   invisible(lapply(shape$contours, points, col = 'red', pch = 16, cex = 0.5))
+  invisible(points(shape$vertices, col = 'green'))
+  invisible(points(shape$centroid['x'], shape$centroid['y'], col = 'blue'))
 }
 
 
@@ -26,11 +28,12 @@ plot.shape <- function(shape) {
 #'                  Must have a dx and dy columns, like for the imager package
 #' @param cr_n - if set, the stencil becomes a "n x n" cross (+) neighbourhood,
 #'               centered at current pixel. Should be an odd number.
+#' @param ... - unused arguments
 #' @return A pixset where every pixel is TRUE if the neighbourhood is of the
 #'         same color as the pixel
 #' @export
 solid_blobs <- function(img, stencil = NULL,
-                        cr_n = max(min(dim(img)[1:2]) %/% 100, 5)) {
+                        cr_n = max(min(dim(img)[1:2]) %/% 100, 5), ...) {
   if(is.null(stencil)) {
     range <- -(cr_n%/%2) : (cr_n%/%2)
     len <- length(range)
@@ -55,15 +58,18 @@ solid_blobs <- function(img, stencil = NULL,
 #' pixels and contours of the pixset
 #'
 #' @param px - the pixset to turn into a shape
+#' @param ... - additional arguments passed to get_sides
 #' @return An object (list) of class 'shape', containing the pixset itself, the
 #'         xy coordinates of the pixset and the contours of the pixset.
 #' @export
-shape_from_pixset <- function(px) {
+shape_from_pixset <- function(px, ...) {
   coords <- imager::where(px)
   shape <- list(pixset = px,
                 xy = coords,
                 contours = imager::contours(px),
                 centroid = colMeans(coords))
+  shape$sides <- get_sides(shape, ...)
+  shape$vertices <- get_vertices(shape, shape$sides)
   class(shape) <- c("shape", class(shape))
   shape
 }
@@ -84,8 +90,10 @@ get_shapes <- function(img, min_area = 25, ...) {
   # create a list of pixsets representing possible shapes
   sl <- imager::split_connected(blobs) %>% purrr::discard(~ sum(.) < min_area)
 
-  # return a list of objects of class 'shape' from pixsets in sl
-  lapply(sl, shape_from_pixset)
+  # return a list of objects of class 'shape' from pixsets in sl, excluding
+  # shapes with 1 or 2 sides as those don't exist
+  lapply(sl, shape_from_pixset, ...) %>%
+    purrr::discard(~ length(.$sides) %in% 1:2)
 }
 
 

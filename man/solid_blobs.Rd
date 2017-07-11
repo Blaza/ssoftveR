@@ -4,7 +4,8 @@
 \alias{solid_blobs}
 \title{Find solid color connected areas in the image}
 \usage{
-solid_blobs(img, stencil = NULL, cr_n = max(min(dim(img)[1:2])\%/\%100, 5))
+solid_blobs(img, stencil = NULL, cr_n = max(min(dim(img)[1:2])\%/\%100, 5),
+  ...)
 }
 \arguments{
 \item{img}{- the cimg imager object}
@@ -14,6 +15,8 @@ Must have a dx and dy columns, like for the imager package}
 
 \item{cr_n}{- if set, the stencil becomes a "n x n" cross (+) neighbourhood,
 centered at current pixel. Should be an odd number.}
+
+\item{...}{- unused arguments}
 }
 \value{
 A pixset where every pixel is TRUE if the neighbourhood is of the

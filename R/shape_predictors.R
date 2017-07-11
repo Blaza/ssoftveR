@@ -1,5 +1,11 @@
 # Here we will define predictors we use for differentiating shapes
 
+# We'll define a vector of names of predictor functions which we use.
+shape_predictors <- c("centroid_distance_variance",
+                      "vertex_count",
+                      "side_length_variance",
+                      "angle_variance")
+
 #' Variance of the distance from the centroid
 #'
 #' The idea is that a circle will have almost zero variance of the distance
@@ -26,5 +32,40 @@ centroid_distance_variance <- function(shape) {
 #'         function)
 #' @export
 vertex_count <- function(shape) {
-  length(get_vertices(shape)$x)
+  length(shape$vertices$x)
+}
+
+
+#' Variance of the lengths of sides (distance between vertices)
+#'
+#' The idea is that regular polygons will have all sides same, i.e. var = 0
+#'
+#' @param shape - the shape for which to calculate the predictor
+#' @return The variance of the distances between adjacent vertices
+#' @export
+side_length_variance <- function(shape) {
+  vertices <- shape$vertices
+
+  if(length(vertices$x) == 0) return(0)
+
+  vertices_adj <- lapply(vertices, shift, n = 1)
+
+  distances <- sqrt((vertices$x - vertices_adj$x)^2 +
+                    (vertices$y - vertices_adj$y)^2)
+
+  var(distances) # returning the variance of distances
+}
+
+
+#' Variance of the angles at vertices
+#'
+#' The idea is that e.g. rectangles have same angles
+#'
+#' @param shape - the shape for which to calculate the predictor
+#' @return The variance of the angles at vertices
+#' @export
+angle_variance <- function(shape) {
+  vertices <- shape$vertices
+
+  if(is.null(vertices$angle)) 0 else var(vertices$angle)
 }

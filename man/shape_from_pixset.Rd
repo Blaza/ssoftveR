@@ -4,10 +4,12 @@
 \alias{shape_from_pixset}
 \title{Make a 'shape' object from a pixset}
 \usage{
-shape_from_pixset(px)
+shape_from_pixset(px, ...)
 }
 \arguments{
 \item{px}{- the pixset to turn into a shape}
+
+\item{...}{- additional arguments passed to get_sides}
 }
 \value{
 An object (list) of class 'shape', containing the pixset itself, the

@@ -65,7 +65,7 @@ get_sides <- function(shape, ma = 7, vel_n = 2) {
   ind <- cumsum(old_lengths)
 
   # we get the middle index in the run of TRUE values as the break (a vertex)
-  break_indices <- (ind[rl$values] - rl$lengths[rl$values]%/%2) %% cnt_len
+  break_indices <- (ind[rl$values] - rl$lengths[rl$values]%/%2) %% cnt_len + 1
 
   sides <- apply(cbind(break_indices, shift(break_indices, 1)), 1, function(v) {
                    # get indices for elements of sides
@@ -81,7 +81,8 @@ get_sides <- function(shape, ma = 7, vel_n = 2) {
                    mid_ind <- side_ind[m_ind]
 
                    # get the mean unit velocity vector of all middle points
-                   dir_vec <- colMeans(unit_vel[mid_ind, ])
+                   # drop = FALSE prevents turning 1-dim matrix to vector
+                   dir_vec <- colMeans(unit_vel[mid_ind, , drop = FALSE])
                    # scale it to unit vector
                    dir_vec <- dir_vec / sqrt(sum(dir_vec^2))
                    names(dir_vec) <- c('x', 'y')
@@ -121,19 +122,20 @@ get_vertices <- function(shape, sides = NULL, ...) {
   angles <- apply(vert_mat, 1, function(v) {
                 # get direction vectors of sides that contain the point v
                 vec <- lapply(sides, function(s) {
+                            # test if for at least one points on s has the same
+                            # x and y coordinates as v
                             if(any(s$x == v[1] & s$y == v[2])) {
                               s$direction
                             } else {
                               NULL
                             }
-                       }) %>% discard(is.null)
+                       }) %>% purrr::discard(is.null)
                 # the angle is the arccos of scalar product of two direction
                 # vector from the same vertex, we negate one of them to get
                 # the direction which goes along the shape, so we get the inner
                 # angle at the vertex. We'll use angles in degrees
                 if(length(vec) == 2)
                   acos(vec[[1]] %*% (-vec[[2]])) * 180 / pi
-
             })
   vertices$angle <- angles
   vertices
