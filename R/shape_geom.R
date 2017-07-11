@@ -136,6 +136,8 @@ get_vertices <- function(shape, sides = NULL, ...) {
                 # angle at the vertex. We'll use angles in degrees
                 if(length(vec) == 2)
                   acos(vec[[1]] %*% (-vec[[2]])) * 180 / pi
+                else
+                  NA
             })
   vertices$angle <- angles
   vertices

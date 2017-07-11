@@ -8,6 +8,21 @@ shape_predictors <- c("centroid_distance_variance",
                       "angle_variance",
                       "adj_angle_sum_variance")
 
+#' Get predictors for a shape
+#'
+#' @param shape - the shape for which to get predictors
+#' @param df - whether to return the predictors as data.frame, useful for
+#'        predict. If FALSE, returns a named vector
+#' @param na_replacement - the value to use to replace NAs
+#' @return A named vector or dataframe containing all predictors for the shape.
+#'         The list of predictors is contained in ssoftveR::shape_predictors.
+#' @export
+get_predictors <- function(shape, df = FALSE, na_replacement = NA) {
+  pred <- sapply(shape_predictors, function(pr) do.call(pr, list(shape)))
+  pred[is.na(pred)] <- na_replacement
+  if(df) data.frame(as.list(pred)) else pred
+}
+
 #' Variance of the distance from the centroid
 #'
 #' The idea is that a circle will have almost zero variance of the distance
@@ -69,7 +84,7 @@ side_length_variance <- function(shape) {
 angle_variance <- function(shape) {
   vertices <- shape$vertices
 
-  if(is.null(vertices$angle)) 0 else var(vertices$angle)
+  if(is.null(vertices$angle)) 0 else var(vertices$angle, na.rm = TRUE)
 }
 
 
@@ -87,6 +102,6 @@ adj_angle_sum_variance <- function(shape) {
 
   adj_ang_sum <- vertices$angle + shift(vertices$angle)
 
-  var(adj_ang_sum)
+  var(adj_ang_sum, na.rm = TRUE)
 }
 
