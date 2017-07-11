@@ -1,6 +1,7 @@
 # Here we will define predictors we use for differentiating shapes
 
-# We'll define a vector of names of predictor functions which we use.
+#' We'll define a vector of names of predictor functions which we use.
+#' @export
 shape_predictors <- c("centroid_distance_variance",
                       "vertex_count",
                       "side_length_variance",
