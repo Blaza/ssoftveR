@@ -11,7 +11,8 @@ vertex_count(shape)
 }
 \value{
 The number of possible vertices found (using the get_vertices()
-        function)
+        function). It is returned as a string, because we want it to be
+        a factor and not a numerical variable.
 }
 \description{
 Number of possible vertices

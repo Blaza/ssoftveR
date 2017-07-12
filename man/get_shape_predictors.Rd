@@ -10,7 +10,7 @@ get_shape_predictors(shape, df = FALSE, na_replacement = NA)
 \item{shape}{- the shape for which to get predictors}
 
 \item{df}{- whether to return the predictors as data.frame, useful for
-predict. If FALSE, returns a named vector}
+predict. If FALSE, returns a named list}
 
 \item{na_replacement}{- the value to use to replace NAs}
 }

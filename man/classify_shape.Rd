@@ -14,5 +14,5 @@ A character vector with the code and long name of the shape class
 }
 \description{
 Classifies the shape into one of the categories which can be seen from
-shape_code_map, or Unknown if it has more than one contour
+shape_code_map, or Unknown if it has more than one contour or > 6 sides
 }
