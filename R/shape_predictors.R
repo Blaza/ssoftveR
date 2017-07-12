@@ -17,7 +17,7 @@ shape_predictors <- c("centroid_distance_variance",
 #' @return A named vector or dataframe containing all predictors for the shape.
 #'         The list of predictors is contained in ssoftveR::shape_predictors.
 #' @export
-get_predictors <- function(shape, df = FALSE, na_replacement = NA) {
+get_shape_predictors <- function(shape, df = FALSE, na_replacement = NA) {
   pred <- sapply(shape_predictors, function(pr) do.call(pr, list(shape)))
   pred[is.na(pred)] <- na_replacement
   if(df) data.frame(as.list(pred)) else pred
