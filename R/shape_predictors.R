@@ -12,15 +12,16 @@ shape_predictors <- c("centroid_distance_variance",
 #'
 #' @param shape - the shape for which to get predictors
 #' @param df - whether to return the predictors as data.frame, useful for
-#'        predict. If FALSE, returns a named vector
+#'        predict. If FALSE, returns a named list
 #' @param na_replacement - the value to use to replace NAs
 #' @return A named vector or dataframe containing all predictors for the shape.
 #'         The list of predictors is contained in ssoftveR::shape_predictors.
 #' @export
 get_shape_predictors <- function(shape, df = FALSE, na_replacement = NA) {
-  pred <- sapply(shape_predictors, function(pr) do.call(pr, list(shape)))
+  pred <- sapply(shape_predictors, function(pr) do.call(pr, list(shape)),
+                 simplify = FALSE)
   pred[is.na(pred)] <- na_replacement
-  if(df) data.frame(as.list(pred)) else pred
+  if(df) data.frame(pred) else pred
 }
 
 #' Variance of the distance from the centroid
@@ -46,10 +47,11 @@ centroid_distance_variance <- function(shape) {
 #'
 #' @param shape - the shape for which to calculate the predictor
 #' @return The number of possible vertices found (using the get_vertices()
-#'         function)
+#'         function). It is returned as a string, because we want it to be
+#'         a factor and not a numerical variable.
 #' @export
 vertex_count <- function(shape) {
-  length(shape$vertices$x)
+  as.character(length(shape$vertices$x))
 }
 
 

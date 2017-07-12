@@ -15,14 +15,16 @@ shape_code_map <- list("et" = "equilateral triangle",
 #' Classify a shape
 #'
 #' Classifies the shape into one of the categories which can be seen from
-#' shape_code_map, or Unknown if it has more than one contour
+#' shape_code_map, or Unknown if it has more than one contour or > 6 sides
 #'
 #' @param shape - the shape to classify
 #' @return A character vector with the code and long name of the shape class
 #' @export
 classify_shape <- function(shape) {
   # if the shape has more than one contour, we don't consider it a shape
-  if(length(shape$contours) != 1) return(c(code = NA, long_name = "Unknown"))
+  # also if it has more than 6 sides, we don't know that shape
+  if(length(shape$contours) != 1 ||  length(shape$vertices$x) > 6)
+    return(c(code = NA, long_name = "Unknown"))
 
   # In the model we used -1 for non existant values, e.g. angle of circle
   shape_pred <- get_shape_predictors(shape, df = TRUE, na_replacement = -1)
