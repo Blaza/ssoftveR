@@ -28,3 +28,22 @@ moving_average <- function(x, n = 5, cyclic = TRUE) {
   rowMeans(shift_matrix)
 }
 
+#' Get the nearest color name from rgb
+#'
+#' @param rgb - vector with r,g,b components, in that order
+#' @export
+rgb2col <- function(rgb) {
+  # define a matrix with rgb values of colors R knows about.
+  # Each column is a RGB color vector
+  colors_rgb <- grDevices::col2rgb(grDevices::colors())
+
+  # a fancy metric for distance between two colors, should resemble human
+  # perception of color. See https://en.wikipedia.org/wiki/Color_difference
+  metric <- colorscience::deltaE2000
+
+  distances <- apply(colors_rgb, 2, metric, Lab1 = rgb)
+
+  # we return the color for which the distance is lowest
+  grDevices::colors()[which.min(distances)]
+}
+
