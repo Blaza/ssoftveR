@@ -3,9 +3,10 @@
 #' Plots the pixset component of the object in black, and the contours in red.
 #'
 #' @param shape - the object of class shape to plot
+#' @param ... - additional parameters for plot
 #' @export
-plot.shape <- function(shape) {
-  plot(shape$pixset)
+plot.shape <- function(shape, ...) {
+  plot(shape$pixset, ...)
   # we don't want a return value, so we use invisible
   invisible(lapply(shape$contours, points, col = 'red', pch = 16, cex = 0.5))
   invisible(points(shape$vertices, col = 'green'))

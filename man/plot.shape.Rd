@@ -4,10 +4,12 @@
 \alias{plot.shape}
 \title{Function for plotting shape objects}
 \usage{
-\method{plot}{shape}(shape)
+\method{plot}{shape}(shape, ...)
 }
 \arguments{
 \item{shape}{- the object of class shape to plot}
+
+\item{...}{- additional parameters for plot}
 }
 \description{
 Plots the pixset component of the object in black, and the contours in red.
