@@ -8,14 +8,14 @@ using namespace cimg_library;
 using namespace Rcpp;
 
 bool equal(double a, double b) {
-    return fabs(a -b) < 1e-16;
+    return fabs(a - b) < 1e-16;
 }
 
 // [[Rcpp::export]]
 LogicalVector C_solid_blobs(NumericVector img_inp, IntegerMatrix stencil) {
     int loc_x, loc_y;
     int st_len = stencil.nrow();
-    
+
     CImg<double> img = as<CImg<double>>(img_inp);
     int w = img.width();
     int h = img.height();

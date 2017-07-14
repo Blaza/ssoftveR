@@ -4,10 +4,13 @@
 \alias{rgb2col}
 \title{Get the nearest color name from rgb}
 \usage{
-rgb2col(rgb)
+rgb2col(rgb, color_names = grDevices::colors())
 }
 \arguments{
 \item{rgb}{- vector with r,g,b components, in that order}
+
+\item{color_names}{- a character vector containing the list of color names
+to look from. By default it's all colors R knows about}
 }
 \description{
 Get the nearest color name from rgb
