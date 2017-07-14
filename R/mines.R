@@ -69,7 +69,8 @@ extract_fields <- function(im, boundaries) {
            x_range <- bnd$x[1] : bnd$x[2]
            y_range <- bnd$y[1] : bnd$y[2]
            field <- list(coords = bnd$coords,
-                         image = as.cimg(im[x_range, y_range, , ]))
+                         image = as.cimg(im[x_range, y_range, , ,
+                                            drop = FALSE]))
            class(field) <- c("field", class(field))
 
            field
@@ -119,6 +120,6 @@ clip <- function(im, amount = 0) {
     n <- round(min(w, h) * percent / 100)
   }
 
-  as.cimg(im[n : (w - n), n : (h - n), , ])
+  as.cimg(im[n : (w - n), n : (h - n), , , drop = FALSE])
 }
 
