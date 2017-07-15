@@ -90,12 +90,14 @@ extract_fields <- function(im, boundaries) {
 #' @return A matrix with each row being the calculated predictors for a field,
 #'         populated column-by-column, just as a regular R matrix, so the
 #'         (i,j) field predictors are in the (i + 9*(j-1))-th row of the matrix.
-get_predictors <- function(predictors, fields) {
+get_field_predictors <- function(predictors, fields) {
   # we transpose to get the desired structure (each row = predictors)
-  ret <- t(sapply(fields, function(field) {
-           sapply(predictors, function(pred)
-                    do.call(pred, list(field$image)))
-         }))
+  ret <- sapply(predictors, function(pred) {
+                sapply(fields, function(field) {
+                    do.call(pred, list(field$image))
+                })
+         })
+  ret <- as.data.frame(ret)
   rownames(ret) <- apply(expand.grid(1:9, 1:9), 1, function(rc)
                          paste0("(", rc[1], ", ", rc[2], ")"))
   ret
