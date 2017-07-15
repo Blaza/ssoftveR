@@ -4,7 +4,7 @@
 \alias{get_field_predictors}
 \title{Calculate specified predictors for given fields}
 \usage{
-get_field_predictors(predictors, fields)
+get_field_predictors(predictors, fields, rename_rows = TRUE)
 }
 \arguments{
 \item{predictors}{- a character vector containing the names of functions that
@@ -12,6 +12,9 @@ take a field$image and return the value of a predictor}
 
 \item{fields}{- a list containing objects of class 'field', usually got from
 the extract_fields function}
+
+\item{rename_rows}{- whether to name rows as (i, j) indicating location in
+a 9x9 matrix (only use for length(fields) == 81)}
 }
 \value{
 A matrix with each row being the calculated predictors for a field,

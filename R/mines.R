@@ -87,10 +87,12 @@ extract_fields <- function(im, boundaries) {
 #'                     take a field$image and return the value of a predictor
 #' @param fields - a list containing objects of class 'field', usually got from
 #'                the extract_fields function
+#' @param rename_rows - whether to name rows as (i, j) indicating location in
+#'                      a 9x9 matrix (only use for length(fields) == 81)
 #' @return A matrix with each row being the calculated predictors for a field,
 #'         populated column-by-column, just as a regular R matrix, so the
 #'         (i,j) field predictors are in the (i + 9*(j-1))-th row of the matrix.
-get_field_predictors <- function(predictors, fields) {
+get_field_predictors <- function(predictors, fields, rename_rows = TRUE) {
   # we transpose to get the desired structure (each row = predictors)
   ret <- sapply(predictors, function(pred) {
                 sapply(fields, function(field) {
@@ -98,8 +100,11 @@ get_field_predictors <- function(predictors, fields) {
                 })
          })
   ret <- as.data.frame(ret)
+
+  if (rename_rows && length(ret[ , 1]) == 81) {
   rownames(ret) <- apply(expand.grid(1:9, 1:9), 1, function(rc)
                          paste0("(", rc[1], ", ", rc[2], ")"))
+  }
   ret
 }
 
