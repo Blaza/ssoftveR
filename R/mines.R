@@ -112,22 +112,39 @@ get_field_predictors <- function(predictors, fields, rename_rows = TRUE) {
 
 #' Clip image border
 #'
+#' Clip image around the border given the amount
+#'
+#' 'amount' can be a single value or a vector of size 4. If only one value is
+#' given, all sides are clipped with the same amount. If it's a vector with
+#' 4 values, the sides are clipped by amount, respectively, in the order
+#' left, right, top, bottom.
+#'
 #' @param im - the image to clip
-#' @param amount - the number of pixels to clip form each side, as numeric, or,
-#'                 if character, the percentage of the smaller dimenision of
-#'                 the image (e.g. clip(im, "5%"))
+#' @param amount - the number of pixels to clip, as numeric, or, if character,
+#'                 the percentage of dimension of the image (e.g.
+#'                 clip(im, "5%")).
 #' @return The clipped image
 #' @export
 clip <- function(im, amount = 0) {
+  if (!length(amount) %in% c(1, 4))
+    stop("amount must be a single value or a 4-element vector")
+
   w <- dim(im)[1]
   h <- dim(im)[2]
 
   n <- amount
+  q <- rep(1, length(amount)) # quotient
   if(is.character(amount)) {
     percent <- as.numeric(gsub("^(\\d+(\\.\\d*)?|\\.\\d+)%$","\\1", amount))
-    n <- round(min(w, h) * percent / 100)
+    q <- percent / 100
   }
 
-  as.cimg(im[n : (w - n), n : (h - n), , , drop = FALSE])
+  if (length(n) == 1) {
+    n <- round(min(w , h) * q)
+    as.cimg(im[n : (w - n), n : (h - n), , , drop = FALSE])
+  } else {
+    n <- round(c(w * q[1], w * q[2], h * q[3], h * q[4]))
+    as.cimg(im[n[1] : (w - n[2]), n[3] : (h - n[4]), , , drop = FALSE])
+  }
 }
 

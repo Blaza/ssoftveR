@@ -9,13 +9,19 @@ clip(im, amount = 0)
 \arguments{
 \item{im}{- the image to clip}
 
-\item{amount}{- the number of pixels to clip form each side, as numeric, or,
-if character, the percentage of the smaller dimenision of
-the image (e.g. clip(im, "5%"))}
+\item{amount}{- the number of pixels to clip, as numeric, or, if character,
+the percentage of dimension of the image (e.g.
+clip(im, "5%")).}
 }
 \value{
 The clipped image
 }
 \description{
-Clip image border
+Clip image around the border given the amount
+}
+\details{
+'amount' can be a single value or a vector of size 4. If only one value is
+given, all sides are clipped with the same amount. If it's a vector with
+4 values, the sides are clipped by amount, respectively, in the order
+left, right, top, bottom.
 }
