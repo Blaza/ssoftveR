@@ -61,7 +61,7 @@ get_boundaries <- function(im, eps = 0.1, prob = 0.8) {
 #' @return A list containing containing 'field' objects, i.e. lists with
 #'         matrix coordinates of the field and the image of the field
 #' @export
-extract_fields <- function(im, boundaries) {
+extract_fields <- function(im, boundaries = get_boundaries(im)) {
   if (!"bounds" %in% class(boundaries))
     stop("'boundaries' must be of class 'bounds'.")
 
@@ -115,7 +115,7 @@ get_field_predictors <- function(predictors, fields, rename_rows = TRUE) {
 #' Clip image around the border given the amount
 #'
 #' 'amount' can be a single value or a vector of size 4. If only one value is
-#' given, all sides are clipped with the same amount. If it's a vector with
+#' given, all sides are clipped with the same amount. If it is a vector with
 #' 4 values, the sides are clipped by amount, respectively, in the order
 #' left, right, top, bottom.
 #'
@@ -146,5 +146,87 @@ clip <- function(im, amount = 0) {
     n <- round(c(w * q[1], w * q[2], h * q[3], h * q[4]))
     as.cimg(im[n[1] : (w - n[2]), n[3] : (h - n[4]), , , drop = FALSE])
   }
+}
+
+
+#' Internal function used to slide a matrix in a single direction.
+#'
+#' If you want to slide a matrix, use slide_matrix
+slide_matrix_single <- function(mat, dir, fill) {
+  h <- dim(mat)[1] # height of mat
+  w <- dim(mat)[2] # width of mat
+  dir <- unlist(dir) # ensure dir is a vector (adply gives data.frame)
+  row <- dir['row'] # row component of translation
+  col <- dir['col'] # col component of translation
+
+  # prepopulate the resulting matrix with fill values
+  sm <- matrix(rep(fill, h*w), ncol = w)
+
+  # calculate ranges which are to be populated in the slid matrix
+  row_range <- if (row < 0) 1 : (h + row) else (row + 1) : h
+  col_range <- if (col < 0) 1 : (w + col) else (col + 1) : w
+
+  # populate given ranges in sm with appropriate values from original matrix
+  sm[row_range, col_range] <- mat[row_range - row, col_range - col]
+
+  sm
+}
+
+
+#' Slide a matrix in a given direction
+#'
+#' Translates a matrix in a given direction (or directions)
+#'
+#' If simplify = TRUE, than this returns a matrix where each column is a matrix
+#' unrolled into a vector. If simplify = FALSE, this returns a list of matrices
+#' resulted from sliding the given matrix in given directions.
+#'
+#' Directions should be a dataframe with columns named 'row' and 'col' and each
+#' row in the dataframe is a row-col vector which gives the direction for
+#' translation. If 'row' and 'col' aren't the names of columns, the first column
+#' in the dataframe will be treated as 'row' and the second as 'col'.
+#'
+#' If only one direction is given, it needn't be a dataframe, but can be just a
+#' vector with row-col coordinates.
+#'
+#' @param mat - the matrix to slide
+#' @param directions - a dataframe of the directions in which to slide the
+#'                     matrix, each row being the row-column coordinates of a
+#'                     direction vector (see details)
+#' @param fill - the value with which to fill empty space left from sliding the
+#'               given matrix
+#' @param simplify - whether to merge results into a matrix or return a list
+#'                   of slidden matrices (see details)
+#' @return Matrix (or list of matrices) which represent mat translated in given
+#'         direction(s). See details.
+#' @export
+slide_matrix <- function(mat, directions, fill = NA, simplify = FALSE) {
+  if (is.vector(directions)) {
+    if (!all(c('row', 'col') %in% names(directions)))
+      names(directions) <- c("row", "col")
+    directions <- data.frame(row = unname(directions['row']),
+                             col = unname(directions['col']))
+  } else {
+    if (!all(c('row', 'col') %in% colnames(directions)))
+      colnames(directions) <- c("row", "col")
+  }
+
+
+  # turn directions into a list. apply simplifies stuff, so this step is
+  # necessary to return a list of slid_matrices
+  slid_matrices <- plyr::alply(directions, 1, slide_matrix_single,
+                               mat = mat, fill = fill)
+  names(slid_matrices) <- plyr::aaply(directions, 1, function(rc) {
+                                    rc <- unlist(rc)
+                                    paste0("(", rc["row"], ",", rc["col"], ")")
+                          })
+
+  if (simplify) {
+    slid_matrices <- sapply(slid_matrices, as.vector)
+  } else if (length(slid_matrices) == 1) {
+    slid_matrices <- slid_matrices[[1]]
+  }
+
+  slid_matrices
 }
 

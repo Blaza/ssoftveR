@@ -4,7 +4,7 @@
 \alias{extract_fields}
 \title{Extract fields from an image, given the boundaries}
 \usage{
-extract_fields(im, boundaries)
+extract_fields(im, boundaries = get_boundaries(im))
 }
 \arguments{
 \item{im}{- the image from which to extract fields, using the boundaries}

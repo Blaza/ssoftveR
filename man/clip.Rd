@@ -21,7 +21,7 @@ Clip image around the border given the amount
 }
 \details{
 'amount' can be a single value or a vector of size 4. If only one value is
-given, all sides are clipped with the same amount. If it's a vector with
+given, all sides are clipped with the same amount. If it is a vector with
 4 values, the sides are clipped by amount, respectively, in the order
 left, right, top, bottom.
 }
