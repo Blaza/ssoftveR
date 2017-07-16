@@ -4,6 +4,7 @@
 #' @import imager
 #' @import nnet
 #' @import grDevices
+#' @importFrom plyr alply aaply
 #' @importFrom colorscience deltaE2000
 NULL
 
