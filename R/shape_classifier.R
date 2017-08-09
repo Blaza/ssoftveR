@@ -1,4 +1,7 @@
 #' @export
+get_shapes_model <- function() shapes_model
+
+#' @export
 shape_code_map <- list("et" = "equilateral triangle",
                        "rt" = "right triangle",
                        "tr" = "triangle",
